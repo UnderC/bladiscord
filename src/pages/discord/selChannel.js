@@ -1,7 +1,8 @@
 import React from 'react'
-
+import { useParams, useHistory } from 'react-router-dom'
 import { connect } from 'react-redux'
-import { actionCreators as fC } from '../../redux/reducer/focusChannel'
+
+import { actionCreators as fG } from '../../redux/reducer/focusGuild'
 
 import {
   List,
@@ -14,6 +15,7 @@ import { makeStyles } from '@material-ui/core/styles'
 import FormatQuoteIcon from '@material-ui/icons/FormatQuote'
 import VolumeUpIcon from '@material-ui/icons/VolumeUp'
 import getMember from '../../structures/getMember'
+import Frame from '../frame'
 
 const useStyles = makeStyles((theme) => ({
   subheader: {
@@ -37,7 +39,6 @@ const sortChannels = (channels) => {
 
 const mergePerm = (roles) => {
   let bitwise = 0
-  console.log(roles)
   for (let role of roles) {
     bitwise &= ~Number(role.permissions)
   }
@@ -80,11 +81,21 @@ const permFilter = (roles, channels, category) => {
 }
 
 const SelChannel = (props) => {
+  const history = useHistory()
+  const { dispatch, user } = props
+  if (!user) history.goBack()
+  
+  const { gID } = useParams()
   const classes = useStyles()
-  const { dispatch, focused, user } = props
+  const focused = user.guilds.find(g => g.id === gID)
   const roles = getRoles(getMember(focused, user.user.id), focused)
 
-  return (
+  const handleChannel = (c) => {
+    dispatch(fG(focused))
+    history.push(`/channel/${c.id}`)
+  }
+
+  const content = (
     <List>
       {sortChannels(focused?.channels || []).map((c, i) => 
         (
@@ -94,7 +105,7 @@ const SelChannel = (props) => {
               permFilter(roles, c.children, c).map((c, i) => (
                 <ListItem
                   key={`listChan${i}`}
-                  onClick={() => dispatch(fC(c))}
+                  onClick={() => handleChannel(c)}
                 >
                   <ListItemAvatar>
                     { c.type === 0 ? <FormatQuoteIcon/> : <VolumeUpIcon/> }
@@ -108,12 +119,18 @@ const SelChannel = (props) => {
       )}
     </List>
   )
+
+  return (
+    <Frame
+      title={focused.name}
+      content={content}
+    />
+  )
 }
 
 const stateToProps = (state) => {
   return {
-    ...state.getUser,
-    ...state.focusGuild
+    ...state.getUser
   }
 }
 

@@ -1,5 +1,5 @@
 import { connect } from 'react-redux'
-import { actionCreators as fG } from '../../redux/reducer/focusGuild'
+import { useHistory } from 'react-router-dom'
 
 import {
   List,
@@ -8,16 +8,23 @@ import {
   ListItemText,
   Avatar
 } from '@material-ui/core'
+import Frame from '../frame';
 
 const SelGuild = (props) => {
+  const history = useHistory()
   const { dispatch, user } = props
 
-  return (
+  if (!user || !user.guilds) history.goBack()
+  const handleGuild = (g) => {
+    history.push(`/guild/${g.id}`)
+  }
+
+  const content = (
     <List>
       {user.guilds.map((g, i) => 
         <ListItem
           key={`listG${i}`}
-          onClick={() => dispatch(fG(g))}
+          onClick={() => handleGuild(g)}
         >
           <ListItemAvatar>
             <Avatar alt={g.name} src={`https://cdn.discordapp.com/icons/${g.id}/${g.icon}.webp?size=128`}/>
@@ -27,11 +34,17 @@ const SelGuild = (props) => {
       )}
     </List>
   )
+
+  return (
+    <Frame
+      title='선택된 서버 없음'
+      content={content}
+    />
+  )
 }
 
 const stateToProps = (state) => {
   return {
-    ...state.focusGuild,
     ...state.getUser
   }
 }

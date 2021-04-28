@@ -1,13 +1,13 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import App from './pages/App';
+import Root from './pages/Router';
 import reportWebVitals from './reportWebVitals';
 import { Provider } from "react-redux";
 import store from './redux/configureStore';
 
 ReactDOM.render(
   <Provider store={store}>
-    <App />
+    <Root />
   </Provider>,
   document.getElementById('root')
 );

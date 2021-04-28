@@ -1,21 +1,12 @@
 import React from 'react'
 
 import {
-  // Typography,
-  ListItem,
-  ListItemAvatar,
-  ListItemText,
-  Avatar,
   IconButton,
   Card,
   CardHeader,
-  CardContent,
-  CardActions,
-  CardMedia,
-  Typography
+  CardMedia
 } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
-import BugReportIcon from '@material-ui/icons/BugReport'
 import GetAppIcon from '@material-ui/icons/GetApp'
 import DescriptionIcon from '@material-ui/icons/Description';
 
@@ -34,7 +25,7 @@ const MessageComp = (props) => {
   const classes = useStyles()
   const { message } = props
 
-  console.log(message?.attachments)
+  // console.log(message?.attachments)
 
   return (
     <React.Fragment>

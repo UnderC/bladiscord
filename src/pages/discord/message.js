@@ -1,18 +1,20 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import apiURL from '../../api/const'
+import { useParams, useHistory } from 'react-router-dom'
 
 import {
-  // Typography,
+  List,
   ListItem,
   ListItemAvatar,
   ListItemText,
-  Avatar,
-  IconButton
+  Avatar
 } from '@material-ui/core'
-import BugReportIcon from '@material-ui/icons/BugReport'
-import MessageComp from './msgComponent'
+import MessageComp from './components/msgComponent'
 import getMember from '../../structures/getMember'
+import Frame from '../frame'
+import ErrorDialog from './components/error'
+import ChatInput from './components/chatInput'
 
 const sortMessages = (messages) => {
   const result = []
@@ -50,11 +52,18 @@ const sortMessages = (messages) => {
 }
 
 const Message = (props) => {
+  let first = true
+  const history = useHistory()
+  const { dispatch, focused, user, passwd, ws } = props
+  if (!user || !focused) history.goBack()
+
+  const { cID } = useParams()
+  const [error, setError] = React.useState(null)
   const [messages, setMsgs] = React.useState([])
   let otoScr = document.getElementById('otoScr')
-  const { dispatch, focused, focusedChannel, user, passwd, ws } = props
+  const focusedChannel = focused.channels.find(c => c.id === cID)
+  
   let allowOto = true
-
   document.onscroll = () => {
     allowOto = (document.scrollingElement.scrollTop >= document.scrollingElement.scrollTopMax)
   }
@@ -74,7 +83,7 @@ const Message = (props) => {
     }
   }
   
-  if (!messages.length) {
+  if (!messages.length && !error) {
     fetch(`${apiURL}/channels/${focusedChannel.id}/messages`, {
       method: 'GET',
       headers: {
@@ -83,16 +92,21 @@ const Message = (props) => {
     }).then(res => {
       return res.json()
     }).then(r => {
-      setMsgs(r.reverse())
-      otoScrm()
+      if (!Array.isArray(r)) setError(r)
+      else setMsgs(r.reverse())
+      // otoScrm()
+    }).catch(e => {
+      setError(e)
     })
   }
+  
+  if (messages.length && first) {
+    setTimeout(otoScrm, 50)
+    first = false
+  }
 
-  return (
-    <React.Fragment>
-      <IconButton>
-        <BugReportIcon/>
-      </IconButton>
+  const content = (
+    <List>
       {
         sortMessages(messages).map(m => (
           <ListItem style={{ alignItems: 'flex-start' }}>
@@ -112,7 +126,22 @@ const Message = (props) => {
           </ListItem>
         ))
       }
-    </React.Fragment>
+    </List>
+  )
+
+  return (
+    <Frame
+      title={focusedChannel.name}
+      content={
+        !error ?
+          content :
+          (
+            <ErrorDialog error={error}/>
+          )
+      }
+      appbar={<ChatInput/>}
+      // onLoad={otoScrm}
+    />
   )
 }
 

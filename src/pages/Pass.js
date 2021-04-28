@@ -19,13 +19,15 @@ import { makeStyles } from '@material-ui/core/styles';
 import Close from '@material-ui/icons/Close'
 import ArrowForwardIcon from '@material-ui/icons/ArrowForward'
 
-import { connect } from 'react-redux'
+import { batch, connect } from 'react-redux'
 import { actionCreators as gWS } from '../redux/reducer/ws'
 import { actionCreators as pw } from "../redux/reducer/passwd"
 import { actionCreators as gU } from "../redux/reducer/getUser"
 
 import { gatewayURL } from '../api/const'
 import opcodes from '../api/discord/opcodes'
+
+import { useHistory } from 'react-router'
 
 var seq = null
 
@@ -45,8 +47,10 @@ const useStyles = makeStyles((theme) => ({
 const immutableOtoLogin = Boolean(window.localStorage.getItem('otoLogin') || false)
 
 const Pass = (props) => {
+  const history = useHistory()
   const classes = useStyles()
   const { dispatch, ws } = props
+
   const [otoLogin, setOtoLogin] = React.useState(immutableOtoLogin)
   const [token, setToken] = React.useState(window.localStorage.getItem('token') || '')
   const [load, setLoad] = React.useState(false)
@@ -64,12 +68,12 @@ const Pass = (props) => {
     const wss = new WebSocket(gatewayURL)
     wss.onerror = () => {
       window.localStorage.removeItem('otoLogin')
-      window.location.reload()
+      history.push('/')
     }
     wss.onclose = (...args) => {
       console.log(...args)
       window.localStorage.removeItem('otoLogin')
-      window.location.reload()
+      history.push('/')
     }
     wss.onopen = () => {}
     wss.handlers = []
@@ -101,18 +105,19 @@ const Pass = (props) => {
         }, wss)
       } else if (msg.op === opcodes.gateway.dispatch) {
         if (msg.t === 'READY') {
-          dispatch(gU(msg.d))
-          dispatch(pw(token))
+          batch(() => {
+            dispatch(gU(msg.d))
+            dispatch(pw(token))
+          })
+
+          history.push('/guilds')
         }
       }
-
       wss.handlers.forEach(h => h(msg))
     }
-
     dispatch(gWS(wss))
   }
 
-  console.log(load, token, immutableOtoLogin)
   if (immutableOtoLogin && token && !load) {
     handleClick()
   }
@@ -140,38 +145,38 @@ const Pass = (props) => {
       ) :
       (
         <Dialog open={true}>
-        <DialogTitle>BlaDiscord</DialogTitle>
+          <DialogTitle>BlaDiscord</DialogTitle>
 
-        <DialogContent>
-          <FormControl>
-            <InputLabel htmlFor="token">토큰</InputLabel>
-            <Input value={token} aria-describedby="tokenHelperTxt" onChange={handleChange} id="token"/>
-            <FormHelperText id="tokenHelperTxt">토큰 정보는 서버로 전송되지 않습니다</FormHelperText>
+          <DialogContent>
+            <FormControl>
+              <InputLabel htmlFor="token">토큰</InputLabel>
+              <Input value={token} aria-describedby="tokenHelperTxt" onChange={handleChange} id="token"/>
+              <FormHelperText id="tokenHelperTxt">토큰 정보는 서버로 전송되지 않습니다</FormHelperText>
 
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={otoLogin}
-                  onChange={checkHandle}
-                  name="otoLogin"
-                  color="primary"
-                />
-              }
-              label="자동 로그인"
-            />
-          </FormControl>
-        </DialogContent>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={otoLogin}
+                    onChange={checkHandle}
+                    name="otoLogin"
+                    color="primary"
+                  />
+                }
+                label="자동 로그인"
+              />
+            </FormControl>
+          </DialogContent>
 
-        <DialogActions>
-          <Button onClick={close}>
-            <Close/>
-          </Button>
-          <Button color='primary' onClick={handleClick}>
-            <ArrowForwardIcon/>
-          </Button>
-        </DialogActions>
-      </Dialog>
-    )
+          <DialogActions>
+            <Button onClick={close}>
+              <Close/>
+            </Button>
+            <Button color='primary' onClick={handleClick}>
+              <ArrowForwardIcon/>
+            </Button>
+          </DialogActions>
+        </Dialog>
+      )
   )
 }
 
