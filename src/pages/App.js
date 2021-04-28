@@ -166,7 +166,7 @@ const App = (props) => {
           <IconButton edge='start' color='inherit' onClick={() => document.all.file.click()}>
             <AddIcon/>
           </IconButton>
-          <Input color='inherit' value={type} onChange={handleChange} style={{ display: 'inline-flex', 'flex-grow': '2' }}/>
+          <Input color='inherit' value={type} onChange={handleChange} style={{ display: 'inline-flex', flexGrow: '2' }}/>
           <IconButton onClick={send} edge='end' color='inherit'>
             <SendIcon/>
           </IconButton>

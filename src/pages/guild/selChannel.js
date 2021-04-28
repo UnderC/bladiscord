@@ -15,7 +15,6 @@ import FormatQuoteIcon from '@material-ui/icons/FormatQuote'
 import VolumeUpIcon from '@material-ui/icons/VolumeUp'
 import getMember from '../../structures/getMember'
 
-
 const useStyles = makeStyles((theme) => ({
   subheader: {
     backgroundColor: theme.palette.background.paper,
@@ -48,39 +47,32 @@ const mergePerm = (roles) => {
 
 const getRoles = (member, guild) => {
   const result = guild.roles.filter(r => member.roles.includes(r.id))
-  return [guild.roles[0], ...result].sort((l, r) => l.position - r.position)
+  return [guild.roles[0], ...result]
 }
 
 const permFilter = (roles, channels, category) => {
-  // const permissions = mergePerm(roles)
+  const permissions = mergePerm(roles.slice(1))
   const roleIDs = roles.map(r => r.id)
   const filter = (c) => {
-    // console.log('wa '+ permissions)
-    // if ((permissions & 8) === 8) return true
+    if ((permissions & 8) === 8) return true
     
-    let not0 = false
-    let result = 0
-    console.log('================================')
-    console.log(c.permission_overwrites)
+    let result = 104324673
+    const owFilter = c.permission_overwrites.filter(ow => roleIDs.includes(ow.id))
+
     if (category.permission_overwrites) {
       const _owFilter = category.permission_overwrites.filter(ow => roleIDs.includes(ow.id))
       for (let ow of _owFilter) {
-        if ((Number(ow.allow) || Number(ow.deny)) !== 0) not0 = true
-        result |= Number(ow.allow)
         result &= ~Number(ow.deny)
+        result |= Number(ow.allow)
       }
     }
 
-    const owFilter = c.permission_overwrites.filter(ow => roleIDs.includes(ow.id))
-    console.log(owFilter)
     for (let ow of owFilter) {
-      if ((Number(ow.allow) || Number(ow.deny)) !== 0) not0 = true
-      result |= Number(ow.allow)
       result &= ~Number(ow.deny)
+      result |= Number(ow.allow)
     }
 
-    console.log(result)
-    return !not0 || ((result & 1024) === 1024) || ((result & 2048) === 2048) // result
+    return ((result & 1024) === 1024)
   }
 
   const result = channels.filter(filter)

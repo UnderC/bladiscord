@@ -63,13 +63,13 @@ const Pass = (props) => {
 
     const wss = new WebSocket(gatewayURL)
     wss.onerror = () => {
-      window.localStorage.setItem('otoLogin', false)
+      window.localStorage.removeItem('otoLogin')
+      window.location.reload()
     }
     wss.onclose = (...args) => {
       console.log(...args)
-      dispatch(gU(null))
-      dispatch(pw(null))
-      window.localStorage.setItem('otoLogin', false)
+      window.localStorage.removeItem('otoLogin')
+      window.location.reload()
     }
     wss.onopen = () => {}
     wss.handlers = []
@@ -104,15 +104,6 @@ const Pass = (props) => {
           dispatch(gU(msg.d))
           dispatch(pw(token))
         }
-      } else if (msg.op === opcodes.gateway.reconnect) {
-        /*send({
-          op: opcodes.gateway.resume,
-          d: {
-            token,
-            session_id: user.session_id,
-            seq
-          }
-        })*/
       }
 
       wss.handlers.forEach(h => h(msg))
