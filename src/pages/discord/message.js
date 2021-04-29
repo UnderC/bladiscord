@@ -13,7 +13,7 @@ import {
 import MessageComp from './components/msgComponent'
 import getMember from '../../structures/getMember'
 import Frame from '../frame'
-import ErrorDialog from './components/error'
+import ErrorDialog from '../default/components/error'
 import ChatInput from './components/chatInput'
 
 const sortMessages = (messages) => {
@@ -55,7 +55,10 @@ const Message = (props) => {
   let first = true
   const history = useHistory()
   const { dispatch, focused, user, passwd, ws } = props
-  if (!user || !focused) history.goBack()
+  if (!user || !focused) {
+    history.replace('/')
+    return <></>
+  } 
 
   const { cID } = useParams()
   const [error, setError] = React.useState(null)

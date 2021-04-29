@@ -2,13 +2,15 @@ import React from 'react'
 import { useHistory } from 'react-router-dom'
 
 import {
-  IconButton,
+  AppBar,
+  Toolbar,
   Paper,
   CssBaseline,
   Typography,
+  IconButton
 } from '@material-ui/core'
-import { makeStyles } from '@material-ui/core/styles';
-import ArrowBackIcon from '@material-ui/icons/ArrowBack';
+import { makeStyles } from '@material-ui/core/styles'
+import ArrowBackIcon from '@material-ui/icons/ArrowBack'
 
 const useStyles = makeStyles((theme) => ({
   text: {
@@ -16,7 +18,12 @@ const useStyles = makeStyles((theme) => ({
     whiteSpace: 'nowrap',
     textOverflow: 'ellipsis'
   }, paper: {
-    paddingBottom: 50,
+    paddingTop: 60,
+    paddingBottom: 40,
+  }, btn: {
+    marginRight: theme.spacing(2)
+  }, title: {
+    flexGrow: 1
   }
 }))
 
@@ -26,27 +33,30 @@ const Frame = (props) => {
 
   return (
     <React.Fragment>
-      <CssBaseline/>
-      <Paper square className={classes.paper} style={{ position: 'fixed', zIndex: '2', width: '100%', height: '75px' }}>
-        <Typography className={classes.text} variant='h5'>
-          <IconButton
-            onClick={() => history.goBack()}
-            edge='start'
-            color='inherit'
-          >
-            <ArrowBackIcon/>
-          </IconButton>
-          <span>
+      <AppBar position='fixed'>
+        <Toolbar>
+          { props.button || 
+            (
+              <IconButton
+                onClick={() => history.goBack()}
+                edge='start'
+                color='inherit'
+              >
+                <ArrowBackIcon/>
+              </IconButton>
+            )
+          }
+          <Typography className={classes.title} variant='h6'>
             { props.title }
-          </span>
-        </Typography>
-      </Paper>
+          </Typography>
+        </Toolbar>
+      </AppBar>
+
+      <CssBaseline/>
       <Paper
         square
         className={classes.paper}
         id='otoScr'
-        style={{ paddingTop: '70px' }}
-        // onLoad={{}}
       >
         { props.content }
       </Paper>

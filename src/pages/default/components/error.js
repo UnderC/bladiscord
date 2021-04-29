@@ -11,20 +11,23 @@ import {
 
 const ErrorDialog = (props) => {
   const history = useHistory()
-  const { error } = props
+  const { error, open } = props
 
   return (
-    <Dialog open={true}>
+    <Dialog open={open || true}>
       <DialogTitle>
         오류가 발생했습니다
       </DialogTitle>
       <DialogContent>
-        <DialogContentText>
-          [{error.code}] {error.message}
+        <DialogContentText style={{ wordBreak: 'keep-all' }}>
+          {error.code ? `[${error.code}] ` : ''}{error.message}
         </DialogContentText>
       </DialogContent>
       <DialogActions>
-        <Button onClick={() => history.goBack()}>이전</Button>
+        {
+          props.actions ||
+          (<Button onClick={() => history.goBack()}>이전</Button>)
+        }
       </DialogActions>
     </Dialog>
   )

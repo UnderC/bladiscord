@@ -9,41 +9,33 @@ import {
   ListItem,
   ListItemAvatar,
   ListItemText,
-  ListSubheader,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
+  Typography
 } from '@material-ui/core'
-import { makeStyles } from '@material-ui/core/styles'
 import FormatQuoteIcon from '@material-ui/icons/FormatQuote'
 import VolumeUpIcon from '@material-ui/icons/VolumeUp'
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import getMember from '../../structures/getMember'
 import Frame from '../frame'
 
-const useStyles = makeStyles((theme) => ({
-  subheader: {
-    backgroundColor: theme.palette.background.paper,
-  }
-}))
+const makeWithCategory = (channels) => {
+  const categories = [{ dummy: true, type: 4, id: null }]
+    .concat(channels.filter(c => c.type === 4))
 
-const sortChannels = (channels) => {
-  const categories = []
-
-  for (let c of [{ dummy: true, type: 4, id: null }].concat(channels.filter(c => c.type === 4))) {
+  for (let c of categories) {
     c.children = channels
-      .filter(_c => _c.type !== 4 && _c.parent_id === c.id)
+      .filter(_c => _c.type !== 4 && (_c.parent_id || null) === c.id)
       .sort((l, r) => l.position - r.position)
       .sort((l, r) => l.type - r.type)
-    categories.push(c)
   }
 
   return categories
 }
 
 const mergePerm = (roles) => {
-  let bitwise = 0
-  for (let role of roles) {
-    bitwise &= ~Number(role.permissions)
-  }
-
-  return bitwise
+  return roles.map(r => r.permissions)
 }
 
 const getRoles = (member, guild) => {
@@ -52,10 +44,11 @@ const getRoles = (member, guild) => {
 }
 
 const permFilter = (roles, channels, category) => {
-  const permissions = mergePerm(roles.slice(1))
+  const permissions = mergePerm(roles)
   const roleIDs = roles.map(r => r.id)
   const filter = (c) => {
-    if ((permissions & 8) === 8) return true
+    const f = permissions.find(p => (p & 8) === 8)
+    if (!isNaN(f)) return true
     
     let result = 104324673
     const owFilter = c.permission_overwrites.filter(ow => roleIDs.includes(ow.id))
@@ -83,41 +76,69 @@ const permFilter = (roles, channels, category) => {
 const SelChannel = (props) => {
   const history = useHistory()
   const { dispatch, user } = props
-  if (!user) history.goBack()
+  if (!user) {
+    history.replace('/')
+    return <></>
+  }
   
   const { gID } = useParams()
-  const classes = useStyles()
   const focused = user.guilds.find(g => g.id === gID)
   const roles = getRoles(getMember(focused, user.user.id), focused)
+  const [expands, setExpands] = React.useState(
+    JSON.parse(window.localStorage.getItem('channelExpands')) ||
+    []
+  )
 
   const handleChannel = (c) => {
     dispatch(fG(focused))
     history.push(`/channel/${c.id}`)
   }
 
+  const expandCategory = (id, expanded) => {
+    let result = []
+    if (expanded && !expands.includes(id)) result = [...expands, id]
+    else {
+      const index = expands.findIndex(_id => _id === id)
+      if (index >= 0) {
+        const frontend = expands.slice(0, index)
+        const backend = expands.slice(index + 1)
+        result = [ ...frontend, ...backend ]
+      }
+    }
+
+    setExpands(result)
+    window.localStorage.setItem('channelExpands', JSON.stringify(result))
+  }
+
   const content = (
-    <List>
-      {sortChannels(focused?.channels || []).map((c, i) => 
-        (
-          <React.Fragment>
-            <ListSubheader key={`listCate${i}`} className={classes.subheader}>{c.name}</ListSubheader>
-            {
-              permFilter(roles, c.children, c).map((c, i) => (
-                <ListItem
-                  key={`listChan${i}`}
-                  onClick={() => handleChannel(c)}
-                >
-                  <ListItemAvatar>
-                    { c.type === 0 ? <FormatQuoteIcon/> : <VolumeUpIcon/> }
-                  </ListItemAvatar>
-                  <ListItemText primary={c.name}/>
-                </ListItem>
-              ))
-            }
-          </React.Fragment>
-        )
-      )}
-    </List>
+    makeWithCategory(focused?.channels || []).map((c, i) => (
+      <Accordion
+        style={{ display: c.children.length ? '' : 'none' }}
+        expanded={expands.includes(c.id || focused.id)}
+        onChange={(e, v) => expandCategory(c.id || focused.id, v)}
+        key={`listCategory${i}`}
+      >
+        <AccordionSummary expandIcon={<ExpandMoreIcon/>}>
+          <Typography variant='h6'>{c.name}</Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+          <List>
+            {permFilter(roles, c.children, c).map((c, i) => (
+              <ListItem
+                button
+                key={`listChan${i}`}
+                onClick={() => handleChannel(c)}
+              >
+                <ListItemAvatar>
+                  { c.type === 0 ? <FormatQuoteIcon/> : <VolumeUpIcon/> }
+                </ListItemAvatar>
+                <ListItemText primary={c.name}/>
+              </ListItem>
+            ))}
+          </List>
+        </AccordionDetails>
+      </Accordion>
+    ))
   )
 
   return (
