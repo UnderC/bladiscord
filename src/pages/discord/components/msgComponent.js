@@ -1,4 +1,5 @@
 import React from 'react'
+import MDRenderer from 'react-markdown'
 
 import {
   IconButton,
@@ -25,12 +26,14 @@ const MessageComp = (props) => {
   const classes = useStyles()
   const { message } = props
 
-  // console.log(message?.attachments)
-
   return (
     <React.Fragment>
       <div style={{ wordBreak: 'break-all' }}>
-        { message.content.startsWith('http') ? <a href={message.content}>{message.content}</a> : message.content}
+        {
+          message.content.startsWith('http') ?
+            <a href={message.content}>{message.content}</a> :
+            <MDRenderer>{message.content}</MDRenderer>
+        }
       </div>
       {message?.attachments.map(a => (
         (a.content_type?.split('/')[0] === 'image' || (a.height && a.width)) ?
