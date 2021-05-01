@@ -1,3 +1,10 @@
+import 'core-js/es/map';
+import 'core-js/es/set';
+import 'core-js/features/array/find';
+import 'core-js/features/array/includes';
+import 'core-js/features/number/is-nan';
+import 'core-js/es/promise'
+
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Root from './pages/Router';

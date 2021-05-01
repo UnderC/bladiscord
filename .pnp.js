@@ -42,6 +42,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@testing-library/jest-dom", "npm:5.12.0"],
             ["@testing-library/react", "virtual:39d70e378365d71381e4696be2dc5f565d58b2bf18a516867af8ed142b62fb3d253e8a94403a212e724dc8f9b9393264624e221ce23992d42f87034cf8cadae4#npm:11.2.6"],
             ["@testing-library/user-event", "virtual:39d70e378365d71381e4696be2dc5f565d58b2bf18a516867af8ed142b62fb3d253e8a94403a212e724dc8f9b9393264624e221ce23992d42f87034cf8cadae4#npm:12.8.3"],
+            ["core-js", "npm:3.11.1"],
             ["discord.js", "npm:12.5.3"],
             ["react", "npm:17.0.2"],
             ["react-dom", "virtual:39d70e378365d71381e4696be2dc5f565d58b2bf18a516867af8ed142b62fb3d253e8a94403a212e724dc8f9b9393264624e221ce23992d42f87034cf8cadae4#npm:17.0.2"],
@@ -7041,6 +7042,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@testing-library/jest-dom", "npm:5.12.0"],
             ["@testing-library/react", "virtual:39d70e378365d71381e4696be2dc5f565d58b2bf18a516867af8ed142b62fb3d253e8a94403a212e724dc8f9b9393264624e221ce23992d42f87034cf8cadae4#npm:11.2.6"],
             ["@testing-library/user-event", "virtual:39d70e378365d71381e4696be2dc5f565d58b2bf18a516867af8ed142b62fb3d253e8a94403a212e724dc8f9b9393264624e221ce23992d42f87034cf8cadae4#npm:12.8.3"],
+            ["core-js", "npm:3.11.1"],
             ["discord.js", "npm:12.5.3"],
             ["react", "npm:17.0.2"],
             ["react-dom", "virtual:39d70e378365d71381e4696be2dc5f565d58b2bf18a516867af8ed142b62fb3d253e8a94403a212e724dc8f9b9393264624e221ce23992d42f87034cf8cadae4#npm:17.0.2"],
@@ -8169,6 +8171,13 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/unplugged/core-js-npm-2.6.12-0b93d77d31/node_modules/core-js/",
           "packageDependencies": [
             ["core-js", "npm:2.6.12"]
+          ],
+          "linkType": "HARD",
+        }],
+        ["npm:3.11.1", {
+          "packageLocation": "./.yarn/unplugged/core-js-npm-3.11.1-43cbc62d6f/node_modules/core-js/",
+          "packageDependencies": [
+            ["core-js", "npm:3.11.1"]
           ],
           "linkType": "HARD",
         }],
