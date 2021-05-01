@@ -11,13 +11,14 @@ import Loading from '../default/components/loding'
 import Login from './login'
 
 const fakeProperties = {
-  '$os': 'Browser',
-  '$browser': 'Firefox',
+  '$os': 'Blackberry OS 10.3.3',
+  '$browser': 'Kiwi',
   '$device': 'Blackberry Classic'
 }
 
 let send = (d, ws) => {
   ws?.send(JSON.stringify(d))
+  console.log(JSON.stringify(d))
 }
 
 const identify = (ws, token) => {
@@ -32,7 +33,18 @@ const identify = (ws, token) => {
       },
       compress: false,
       large_threshold: 250,
-      intents: 32519
+      intents: 771
+    }
+  }, ws)
+}
+
+const resume = (ws, token, seq) => {
+  send({
+    op: opcodes.gateway.resume,
+    d: {
+      token,
+      seq,
+      session_id: window.localStorage.getItem('session')
     }
   }, ws)
 }
@@ -46,7 +58,7 @@ const makeHeartbeatInterval = (ws, interval) => {
 const makeConnection = (token) => {
   return new Promise((resolve, __reject) => {
     const reject = (r) => {
-      if (r.code === 4004) window.localStorage.removeItem('otoLogin')
+      if (r?.code === 4004) window.localStorage.removeItem('otoLogin')
       __reject(r)
     }
 
@@ -59,16 +71,19 @@ const makeConnection = (token) => {
 
     ws.onmessage = (raw) => {
       const msg = JSON.parse(raw.data)
-      // console.log(msg)
+      console.log(msg)
 
       ws.seq = msg.s || ws.seq
       if (msg.op === opcodes.gateway.hello) {
-        makeHeartbeatInterval(ws, msg.d.heartbeat_interval)
+        makeHeartbeatInterval(ws, msg.d.heartbeat_interval + Math.random())
         identify(ws, token)
       } else if (msg.op === opcodes.gateway.dispatch) {
         if (msg.t === 'READY') {
+          window.localStorage.setItem('session', msg.d.session_id)
           resolve([ws, msg.d])
         }
+      } else if (msg.op === opcodes.gateway.invalidSession) {
+        resume(token)
       }
       ws.handlers.forEach(h => h(msg))
     }
@@ -108,9 +123,10 @@ class WS extends React.Component {
   }
 
   render () {
+    const { ws } = this.props
     const { loading } = this.state
     return (
-      loading ? <Loading open={loading}/> : <Login login={this.login}/>
+      loading ? <Loading open={loading}/> : !ws ? <Login login={this.login}/> : <></>
     )
   }
 }

@@ -22,13 +22,12 @@ import Close from '@material-ui/icons/Close'
 import ArrowForwardIcon from '@material-ui/icons/ArrowForward'
 
 let firstRun = true
-let immutableOtoLogin = (
-  JSON.parse(window.localStorage.getItem('otoLogin')) ||
-  false
-)
 
 const Login = (props) => {
-  const [otoLogin, setOtoLogin] = React.useState(immutableOtoLogin)
+  const [otoLogin, setOtoLogin] = React.useState((
+    JSON.parse(window.localStorage.getItem('otoLogin')) ||
+    false
+  ))
   const [token, setToken] = React.useState(
     window.localStorage.getItem('token') ||
     ''
@@ -42,7 +41,7 @@ const Login = (props) => {
     props.login(token)
   }
 
-  if (firstRun && immutableOtoLogin && token.length) login()
+  if (firstRun && otoLogin && token.length) login()
 
   return (
     <Dialog open={true}>

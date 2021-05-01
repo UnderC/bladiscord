@@ -11,7 +11,7 @@ import {
   Avatar
 } from '@material-ui/core'
 import MessageComp from './components/msgComponent'
-import getMember from '../../structures/getMember'
+import { getGuildMember } from '../../structures/guild'
 import Frame from '../frame'
 import ErrorDialog from '../default/components/error'
 import ChatInput from './components/chatInput'
@@ -117,7 +117,7 @@ const Message = (props) => {
               <Avatar src={`https://cdn.discordapp.com/avatars/${m.id}/${m.avatar}.webp?size=128`}/>
             </ListItemAvatar>
             <ListItemText
-              primary={getMember(focused, m.id)?.nick || m.username}
+              primary={getGuildMember(focused, m.id)?.nick || m.username}
               secondary={
                 <React.Fragment>
                   {m.messages.map(v => (
