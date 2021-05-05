@@ -3337,6 +3337,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"anymatch@npm:^3":
+  version: 3.1.2
+  resolution: "anymatch@npm:3.1.2"
+  dependencies:
+    normalize-path: ^3.0.0
+    picomatch: ^2.0.4
+  checksum: cd6c08eb8d435741a9de6f5695c75cfba747a50772929ca588235535c6a57d37f2c2b34057768f015fd92abb88108b122ed2e399faac6ae30363a8ca0b6107d0
+  languageName: node
+  linkType: hard
+
 "anymatch@npm:^3.0.3, anymatch@npm:~3.1.1":
   version: 3.1.1
   resolution: "anymatch@npm:3.1.1"
@@ -3983,7 +3993,9 @@ __metadata:
     redux-devtools-extension: ^2.13.9
     redux-logger: ^3.0.6
     redux-thunk: ^2.3.0
+    terser-brunch: ^4.0.0
     web-vitals: ^1.0.1
+    whatwg-fetch: ^3.6.2
     ws: ^7.4.5
   languageName: unknown
   linkType: soft
@@ -14802,6 +14814,16 @@ resolve@1.18.1:
   languageName: node
   linkType: hard
 
+"terser-brunch@npm:^4.0.0":
+  version: 4.0.0
+  resolution: "terser-brunch@npm:4.0.0"
+  dependencies:
+    anymatch: ^3
+    terser: ^4.4
+  checksum: 8b7398d6e188a3460751bfee9124f31a26c2d2f282c1ca18e434b2439bca52034fbd728735bddc6eb12dc1c0a7bb29f7692d3775a6842794f8e6a2c6dfd19186
+  languageName: node
+  linkType: hard
+
 "terser-webpack-plugin@npm:4.2.3":
   version: 4.2.3
   resolution: "terser-webpack-plugin@npm:4.2.3"
@@ -14840,7 +14862,7 @@ resolve@1.18.1:
   languageName: node
   linkType: hard
 
-"terser@npm:^4.1.2, terser@npm:^4.6.2, terser@npm:^4.6.3":
+"terser@npm:^4.1.2, terser@npm:^4.4, terser@npm:^4.6.2, terser@npm:^4.6.3":
   version: 4.8.0
   resolution: "terser@npm:4.8.0"
   dependencies:
@@ -15898,6 +15920,13 @@ resolve@1.18.1:
   version: 3.6.1
   resolution: "whatwg-fetch@npm:3.6.1"
   checksum: a018f35071f8059cfb0e0edea1a6729ff7669c80275e8cc6773f239d1f7a44ef6018cd073c89d013e36eba9554cc374fa28b3179a08454598012f40f99adeb8a
+  languageName: node
+  linkType: hard
+
+"whatwg-fetch@npm:^3.6.2":
+  version: 3.6.2
+  resolution: "whatwg-fetch@npm:3.6.2"
+  checksum: eaa370015f81fbf7fc69d5410a13c2200d3342fa783397e9a7e64215498276459993c05e826ed736d28a8abe4e7cc3f97e9b2ffadbc58129a55f443abdfea494
   languageName: node
   linkType: hard
 

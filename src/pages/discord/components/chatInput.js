@@ -11,8 +11,7 @@ import SendIcon from '@material-ui/icons/Send';
 import AddIcon from '@material-ui/icons/Add';
 
 import { connect } from 'react-redux'
-
-import apiURL from '../../../api/const'
+import apiFetch from '../../../structures/apiFetch';
 
 const ChatInput = (props) => {
   const [type, setType] = React.useState('')
@@ -21,19 +20,14 @@ const ChatInput = (props) => {
 
   const send = () => {
     if (!cID) return
-    fetch(`${apiURL}/channels/${cID}/messages`, {
-      method: 'POST',
-      headers: {
-        'Authorization': `${passwd}`,
-        'Content-Type': 'application/json'
-      }, body: JSON.stringify(
-        {
-          tts: false,
-          content: type
-        }
-      )
-    }).then(console.log).catch(console.error)
-    setType('')
+    apiFetch(
+      'POST',
+      `channels/${cID}/messages`,
+      passwd,
+      { body: JSON.stringify({ tts: false, content: type })},
+      { 'Content-Type': 'application/json' }
+    ).then(() => setType(''))
+    .catch(console.error)
   }
 
   const handleChange = (e) => {
@@ -43,12 +37,13 @@ const ChatInput = (props) => {
   const handleUpload = (e) => {
     const formData = new FormData()
     formData.append('file', e.target.files[0])
-    fetch(`${apiURL}/channels/${cID}/messages`, {
-      method: 'POST',
-      headers: {
-        'Authorization': `${passwd}`
-      }, body: formData
-    }).then(console.log).catch(console.error)
+    apiFetch(
+      'POST',
+      `channels/${cID}/messages`,
+      passwd,
+      { body: formData }
+    ).then()
+    .catch(console.error)
   }
 
   return (
@@ -58,10 +53,10 @@ const ChatInput = (props) => {
       </form>
 
       <Toolbar>
-        <IconButton edge='start' color='inherit' onClick={() => document.all.file.click()}>
+        <IconButton edge='start' onClick={() => document.all.file.click()}>
           <AddIcon/>
         </IconButton>
-        <Input color='inherit' value={type} onChange={handleChange} style={{ display: 'inline-flex', flexGrow: '2' }}/>
+        <Input value={type} onChange={handleChange} style={{ display: 'inline-flex', flexGrow: '2' }}/>
         <IconButton onClick={send} edge='end' color='inherit'>
           <SendIcon/>
         </IconButton>

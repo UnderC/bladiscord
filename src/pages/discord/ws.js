@@ -6,9 +6,8 @@ import opcodes from '../../api/discord/opcodes'
 import { actionCreators as gWS } from '../../redux/reducer/ws'
 import { actionCreators as gU } from '../../redux/reducer/getUser'
 import { actionCreators as pw } from '../../redux/reducer/passwd'
-import { withRouter } from 'react-router-dom'
+import { useHistory, withRouter } from 'react-router-dom'
 import Loading from '../default/components/loding'
-import Login from './login'
 
 const fakeProperties = {
   '$os': 'Blackberry OS 10.3.3',
@@ -18,7 +17,7 @@ const fakeProperties = {
 
 let send = (d, ws) => {
   ws?.send(JSON.stringify(d))
-  console.log(JSON.stringify(d))
+  // console.log(JSON.stringify(d))
 }
 
 const identify = (ws, token) => {
@@ -33,7 +32,7 @@ const identify = (ws, token) => {
       },
       compress: false,
       large_threshold: 250,
-      intents: 771
+      intents: 32767
     }
   }, ws)
 }
@@ -71,7 +70,7 @@ const makeConnection = (token) => {
 
     ws.onmessage = (raw) => {
       const msg = JSON.parse(raw.data)
-      console.log(msg)
+      // console.log(msg)
 
       ws.seq = msg.s || ws.seq
       if (msg.op === opcodes.gateway.hello) {
@@ -90,52 +89,46 @@ const makeConnection = (token) => {
   })
 }
 
-class WS extends React.Component {
-  constructor (props) {
-    super(props)
-    this.login = this.login.bind(this)
-    this.state = {
-      loading: false
-    }
-  }
+const WS = (props) => {
+  const [loading, setLoading] = React.useState(false)
+  const { dispatch, ws, passwd } = props
+  const history = useHistory()
+  const otoLogin = JSON.parse(window.localStorage.getItem('otoLogin'))
 
-  login (token) {
-    const { dispatch, user, ws } = this.props
-    if (user) ws.close()
-    if (token && !this.state.loading) {
-      this.setState({ loading: true })
-      makeConnection(token)
+  const login = () => {
+    if (passwd && !loading) {
+      setLoading(true)
+      makeConnection(passwd)
         .then(([ws, user]) => {
           batch(() => {
-            dispatch(pw(token))
+            dispatch(pw(passwd))
             dispatch(gWS(ws))
             dispatch(gU(user))
           })
           
-          this.setState({ loading: false })
-          this.props.history.push('/guilds')
+          setLoading(false)
+          history.push('/guilds')
         })
         .catch((r) => {
-          this.setState({ loading: false })
+          setLoading(false)
           console.log(r)
         })
     }
   }
+  
+  if (otoLogin && passwd && !ws) login()
 
-  render () {
-    const { ws } = this.props
-    const { loading } = this.state
-    return (
-      loading ? <Loading open={loading}/> : !ws ? <Login login={this.login}/> : <></>
-    )
-  }
+  return (
+    <Loading open={loading}/>
+  )
 }
 
 const stateToProps = (state) => {
   return {
+    ...state.passwd,
     ...state.getUser,
     ...state.gatewayWS
   }
 }
 
-export default withRouter(connect(stateToProps)(WS))
+export default connect(stateToProps)(WS)

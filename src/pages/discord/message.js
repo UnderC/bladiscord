@@ -1,55 +1,21 @@
 import React from 'react'
-import { connect } from 'react-redux'
-import apiURL from '../../api/const'
+
 import { useParams, useHistory } from 'react-router-dom'
+import { connect } from 'react-redux'
 
 import {
   List,
-  ListItem,
-  ListItemAvatar,
-  ListItemText,
-  Avatar
+  IconButton
 } from '@material-ui/core'
-import MessageComp from './components/msgComponent'
-import { getGuildMember } from '../../structures/guild'
-import Frame from '../frame'
+import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward'
+import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward'
+
 import ErrorDialog from '../default/components/error'
+import Messages from './components/messages'
 import ChatInput from './components/chatInput'
+import Frame from '../frame'
 
-const sortMessages = (messages) => {
-  const result = []
-
-  let bef = null
-  const filtered = messages.map(m => {
-    let _bef = bef
-    bef = m.author.id
-    if (_bef !== m.author.id) return m.author
-  })
-
-  let startIndex = 0
-  for (const m of filtered) {
-    if (!m) continue
-
-    const bef = m.id
-    let swit = false
-    
-    const filtered = messages.filter((_m, i) => {
-      if (swit || (startIndex > i)) return false
-      else if (bef !== _m.author.id) {
-        startIndex = i
-        swit = true
-        return false
-      }
-      
-      return true
-    })
-
-    m.messages = filtered
-    result.push(m)
-  }
-
-  return result
-}
+import { fetchMessage, fetchMessages } from '../../structures/message'
 
 const Message = (props) => {
   let first = true
@@ -71,65 +37,74 @@ const Message = (props) => {
     allowOto = (document.scrollingElement.scrollTop >= document.scrollingElement.scrollTopMax)
   }
 
-  const otoScrm = () => {
-    if (allowOto) {
-      if (!otoScr) otoScr = document.getElementById('otoScr')
-      document.scrollingElement.scrollTo(0, otoScr?.scrollHeight)
+  const otoScrm = (e, y) => {
+    try {
+      if (e || allowOto) {
+        if (!otoScr) otoScr = document.getElementById('otoScr')
+        document.scrollingElement.scrollTo(0, y >= 0 ? y : otoScr?.scrollHeight)
+      }
+    } catch {
+      console.log('일부 웹 기술이 지원되지 않아서 자동으로 스크롤 할 수 없었습니다.')
     }
+  }
+
+  const loadMore = () => {
+    fetchMessages(
+      passwd, focusedChannel.id, messages, messages[0].id
+    ).then(messages => {
+      setMsgs(messages)
+      setTimeout(() => otoScrm(true, 0), 50)
+    })
   }
 
   ws.handlers[0] = (msg) => {
     if (msg.t === 'MESSAGE_CREATE') {
       if (msg.d.channel_id !== focusedChannel.id) return
-      setMsgs([...messages, msg.d])
+      console.log(msg.d)
+      if (!msg.d.content.length) {
+        fetchMessage(passwd, focusedChannel.id, msg.d.id)
+          .then(m => setMsgs([...messages, m]))
+      } else setMsgs([...messages, msg.d])
       otoScrm()
     }
   }
   
-  if (!messages.length && !error) {
-    fetch(`${apiURL}/channels/${focusedChannel.id}/messages`, {
-      method: 'GET',
-      headers: {
-        'Authorization': `${passwd}`
-      }
-    }).then(res => {
-      return res.json()
-    }).then(r => {
-      if (!Array.isArray(r)) setError(r)
-      else setMsgs(r.reverse())
-      // otoScrm()
-    }).catch(e => {
-      setError(e)
+  if (!messages.length && !error && first) {
+    fetchMessages(passwd, focusedChannel.id, messages).then(r => {
+      setMsgs(r)
+    }).catch(r => {
+      setError(r)
+      first = false
     })
-  }
-  
-  if (messages.length && first) {
-    setTimeout(otoScrm, 50)
+  } else if (!error && first) {
+    setTimeout(() => otoScrm(true), 50)
     first = false
   }
 
   const content = (
-    <List>
-      {
-        sortMessages(messages).map(m => (
-          <ListItem style={{ alignItems: 'flex-start' }}>
-            <ListItemAvatar>
-              <Avatar src={`https://cdn.discordapp.com/avatars/${m.id}/${m.avatar}.webp?size=128`}/>
-            </ListItemAvatar>
-            <ListItemText
-              primary={getGuildMember(focused, m.id)?.nick || m.username}
-              secondary={
-                <React.Fragment>
-                  {m.messages.map(v => (
-                    <MessageComp message={v}/>
-                  ))}
-                </React.Fragment>
-              }
-            />
-          </ListItem>
-        ))
-      }
-    </List>
+    <React.Fragment>
+      <div style={{
+        position: 'fixed',
+        top: '4px',
+        right: 0,
+        display: 'flex',
+        justifyContent: 'right',
+        zIndex: 1101
+      }}>
+        <IconButton style={{ color: 'white' }}>
+          <ArrowUpwardIcon onClick={loadMore}/>
+        </IconButton>
+        <IconButton style={{ color: 'white' }}>
+          <ArrowDownwardIcon onClick={otoScrm}/>
+        </IconButton>
+      </div>
+      <List>
+        <Messages
+          messages={messages}
+          focused={focused}
+        />
+      </List>
+    </React.Fragment>
   )
 
   return (
@@ -138,12 +113,9 @@ const Message = (props) => {
       content={
         !error ?
           content :
-          (
-            <ErrorDialog error={error}/>
-          )
+          <ErrorDialog error={error}/>
       }
       appbar={<ChatInput/>}
-      // onLoad={otoScrm}
     />
   )
 }

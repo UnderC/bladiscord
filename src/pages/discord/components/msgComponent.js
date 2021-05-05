@@ -1,5 +1,5 @@
 import React from 'react'
-import MDRenderer from 'react-markdown'
+// import MDRenderer from 'react-markdown'
 
 import {
   IconButton,
@@ -10,6 +10,7 @@ import {
 import { makeStyles } from '@material-ui/core/styles'
 import GetAppIcon from '@material-ui/icons/GetApp'
 import DescriptionIcon from '@material-ui/icons/Description';
+import markdownParse from '../../../structures/markdown'
 
 const useStyles = makeStyles({
   root: {
@@ -24,19 +25,16 @@ const handleDownload = (url) => {
 
 const MessageComp = (props) => {
   const classes = useStyles()
-  const { message } = props
+  const { content, attachments } = props
 
   return (
     <React.Fragment>
       <div style={{ wordBreak: 'break-all' }}>
-        {
-          message.content.startsWith('http') ?
-            <a href={message.content}>{message.content}</a> :
-            <MDRenderer>{message.content}</MDRenderer>
-        }
+        <p dangerouslySetInnerHTML={{ __html: markdownParse(content) }}/>
       </div>
-      {message?.attachments.map(a => (
-        (a.content_type?.split('/')[0] === 'image' || (a.height && a.width)) ?
+      {attachments?.map(a => (
+        <React.Fragment key={`m${a.id}`}>
+        {(a.content_type?.split('/')[0] === 'image' || (a.height && a.width)) ?
           (
             <Card className={classes.root}>
               <CardMedia
@@ -58,10 +56,11 @@ const MessageComp = (props) => {
                 }
               />
             </Card>
-          )
+          )}
+        </React.Fragment>
       ))}
     </React.Fragment>
   )
 }
 
-export default MessageComp
+export default React.memo(MessageComp)

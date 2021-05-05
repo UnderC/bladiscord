@@ -24,6 +24,7 @@ import ArrowForwardIcon from '@material-ui/icons/ArrowForward'
 let firstRun = true
 
 const Login = (props) => {
+  const { dispatch } = props
   const [otoLogin, setOtoLogin] = React.useState((
     JSON.parse(window.localStorage.getItem('otoLogin')) ||
     false
@@ -38,7 +39,9 @@ const Login = (props) => {
   const login = () => {
     window.localStorage.setItem('token', token)
     window.localStorage.setItem('otoLogin', otoLogin)
-    props.login(token)
+    
+    dispatch(pw(token))
+    firstRun = false
   }
 
   if (firstRun && otoLogin && token.length) login()
@@ -50,7 +53,13 @@ const Login = (props) => {
       <DialogContent>
         <FormControl>
           <InputLabel htmlFor='token'>토큰</InputLabel>
-          <Input type='password' value={token} aria-describedby='tokenHelperTxt' onChange={handleToken} id='token'/>
+          <Input
+            type='password'
+            value={token}
+            aria-describedby='tokenHelperTxt'
+            onChange={handleToken}
+            id='token'
+          />
           <FormHelperText id='tokenHelperTxt'>토큰 정보는 서버로 전송되지 않습니다</FormHelperText>
 
           <FormControlLabel
@@ -68,10 +77,7 @@ const Login = (props) => {
       </DialogContent>
 
       <DialogActions>
-        <Button onClick={window.close}>
-          <Close/>
-        </Button>
-        <Button color='primary' onClick={() => login(token)}>
+        <Button color='primary' onClick={login}>
           <ArrowForwardIcon/>
         </Button>
       </DialogActions>
@@ -79,4 +85,4 @@ const Login = (props) => {
   )
 }
 
-export default Login
+export default connect(() => ({}))(Login)

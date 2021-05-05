@@ -30,7 +30,8 @@ const SelChannel = (props) => {
   }
   
   const { gID } = useParams()
-  const focused = user.guilds.find(g => g.id === gID)
+  const guild = user.guilds.find(g => g.id === gID)
+  const focused = guild || user.private_channels
   const roles = getGuildRoles(getGuildMember(focused, user.user.id), focused)
   const [expands, setExpands] = React.useState(
     JSON.parse(window.localStorage.getItem('channelExpands')) ||

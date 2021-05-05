@@ -1,5 +1,5 @@
 const apiURL = 'https://discord.com/api'
-const apiVersion = 8
+const apiVersion = 9
 
 const gatewayURL = `wss://gateway.discord.gg/?v=${apiVersion}&encoding=json`
 

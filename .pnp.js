@@ -54,7 +54,9 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["redux-devtools-extension", "virtual:39d70e378365d71381e4696be2dc5f565d58b2bf18a516867af8ed142b62fb3d253e8a94403a212e724dc8f9b9393264624e221ce23992d42f87034cf8cadae4#npm:2.13.9"],
             ["redux-logger", "npm:3.0.6"],
             ["redux-thunk", "npm:2.3.0"],
+            ["terser-brunch", "npm:4.0.0"],
             ["web-vitals", "npm:1.1.1"],
+            ["whatwg-fetch", "npm:3.6.2"],
             ["ws", "virtual:cf56da7683803aa9264f916bdb4d485008dca0988e9e122f3753d126f3aa20bc7f9e07a02e7a15b6e115d384905f8a0966a806be17cc75f4d753d1d69bf33907#npm:7.4.5"]
           ],
           "linkType": "SOFT",
@@ -6200,6 +6202,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["picomatch", "npm:2.2.2"]
           ],
           "linkType": "HARD",
+        }],
+        ["npm:3.1.2", {
+          "packageLocation": "./.yarn/cache/anymatch-npm-3.1.2-1d5471acfa-cd6c08eb8d.zip/node_modules/anymatch/",
+          "packageDependencies": [
+            ["anymatch", "npm:3.1.2"],
+            ["normalize-path", "npm:3.0.0"],
+            ["picomatch", "npm:2.2.2"]
+          ],
+          "linkType": "HARD",
         }]
       ]],
       ["aproba", [
@@ -7054,7 +7065,9 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["redux-devtools-extension", "virtual:39d70e378365d71381e4696be2dc5f565d58b2bf18a516867af8ed142b62fb3d253e8a94403a212e724dc8f9b9393264624e221ce23992d42f87034cf8cadae4#npm:2.13.9"],
             ["redux-logger", "npm:3.0.6"],
             ["redux-thunk", "npm:2.3.0"],
+            ["terser-brunch", "npm:4.0.0"],
             ["web-vitals", "npm:1.1.1"],
+            ["whatwg-fetch", "npm:3.6.2"],
             ["ws", "virtual:cf56da7683803aa9264f916bdb4d485008dca0988e9e122f3753d126f3aa20bc7f9e07a02e7a15b6e115d384905f8a0966a806be17cc75f4d753d1d69bf33907#npm:7.4.5"]
           ],
           "linkType": "SOFT",
@@ -19437,6 +19450,17 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD",
         }]
       ]],
+      ["terser-brunch", [
+        ["npm:4.0.0", {
+          "packageLocation": "./.yarn/cache/terser-brunch-npm-4.0.0-9f136e706e-8b7398d6e1.zip/node_modules/terser-brunch/",
+          "packageDependencies": [
+            ["terser-brunch", "npm:4.0.0"],
+            ["anymatch", "npm:3.1.2"],
+            ["terser", "npm:4.8.0"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
       ["terser-webpack-plugin", [
         ["npm:1.4.5", {
           "packageLocation": "./.yarn/cache/terser-webpack-plugin-npm-1.4.5-d14c27a9f3-8fadaece64.zip/node_modules/terser-webpack-plugin/",
@@ -20725,6 +20749,13 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/whatwg-fetch-npm-3.6.1-0e712e608a-a018f35071.zip/node_modules/whatwg-fetch/",
           "packageDependencies": [
             ["whatwg-fetch", "npm:3.6.1"]
+          ],
+          "linkType": "HARD",
+        }],
+        ["npm:3.6.2", {
+          "packageLocation": "./.yarn/cache/whatwg-fetch-npm-3.6.2-4bdf324792-eaa370015f.zip/node_modules/whatwg-fetch/",
+          "packageDependencies": [
+            ["whatwg-fetch", "npm:3.6.2"]
           ],
           "linkType": "HARD",
         }]
