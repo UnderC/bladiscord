@@ -1,19 +1,16 @@
 import { connect } from 'react-redux'
 import { useHistory } from 'react-router-dom'
 
+import { actionCreators as fG } from '../../redux/reducer/focusGuild'
+
 import {
-  List,
-  ListItem,
-  ListItemAvatar,
-  ListItemText,
-  Avatar,
-  IconButton
+  List
 } from '@material-ui/core'
-import SettingsIcon from '@material-ui/icons/Settings'
 import Frame from '../frame'
 
 import React from 'react'
 import ChannelItem from './components/channelItem'
+import { privateChannel } from '../../structures/channel'
 
 const SelDM = (props) => {
   const history = useHistory()
@@ -24,30 +21,15 @@ const SelDM = (props) => {
     return <></>
   }
 
-  const dms = user.private_channels.map(g => {
-    const name = g.type === 1 ?
-      g.recipients[0].username :
-      g.name || `${g.recipients.length}명의 그룹`
-    const avatar = g.type === 3 ?
-      `https://cdn.discordapp.com/channel-icons/${g.id}/${g.icon}.png?` :
-      `https://cdn.discordapp.com/avatars/${g.recipients[0].id}/${g.recipients[0].avatar}.webp?size=128`
-
-    return { ...g, name, avatar }
-  }).sort((l, r) => Number(r.last_message_id) - Number(l.last_message_id))
-
-  const handleGuild = (g) => {
-    history.push(`/guild/${g.id}`)
+  const handleDM = (g) => {
+    dispatch(fG(g))
+    history.push(`/channel/${g.id}`)
   }
 
-  const button = (
-    <IconButton
-      onClick={() => history.push('/settings')}
-      edge='start'
-      color='inherit'
-    >
-      <SettingsIcon/>
-    </IconButton>
-  )
+  const dms = React.useMemo(
+    () => user.private_channels.map(privateChannel)
+      .sort((l, r) => Number(r.last_message_id) - Number(l.last_message_id))
+  , [user.private_channels])
 
   const content = (
     <List>
@@ -56,7 +38,7 @@ const SelDM = (props) => {
           key={`listDM${i}`}
           name={g.name}
           avatar={g.avatar}
-          url={`/dm/${g.id}`}
+          onClick={() => handleDM(g)}
         />
       )}
     </List>
@@ -64,7 +46,6 @@ const SelDM = (props) => {
 
   return (
     <Frame
-      button={button}
       title='선택된 개인 메시지 채널이 없음'
       content={content}
     />
@@ -73,7 +54,8 @@ const SelDM = (props) => {
 
 const stateToProps = (state) => {
   return {
-    ...state.getUser
+    ...state.getUser,
+    ...state.focusGuild
   }
 }
 

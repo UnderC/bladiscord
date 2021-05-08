@@ -16,6 +16,22 @@ const mergePerm = (roles) => {
   return roles.map(r => r.permissions)
 }
 
+const privateChannel = (g) => {
+  const name = g.type === 1 ?
+    g.recipients[0].username :
+    g.name || `${g.recipients.length}명의 그룹`
+
+  const avatar = g.type === 3 ?
+    `https://cdn.discordapp.com/channel-icons/${g.id}/${g.icon}.png?` :
+    `https://cdn.discordapp.com/avatars/${g.recipients[0].id}/${g.recipients[0].avatar}.webp?size=128`
+
+  return {
+    name,
+    avatar,
+    ...g
+  }
+}
+
 const channelPermFilter = (roles, channels, category) => {
   const permissions = mergePerm(roles)
   const roleIDs = roles.map(r => r.id)
@@ -47,4 +63,4 @@ const channelPermFilter = (roles, channels, category) => {
   return result
 }
 
-export { makeWithCategory, channelPermFilter }
+export { makeWithCategory, channelPermFilter, privateChannel }

@@ -11,13 +11,13 @@ import React from 'react'
 
 const ChannelItem = (props) => {
   const history = useHistory()
-  const { name, avatar, url } = props
+  const { name, avatar, url, onClick } = props
   const handle = () => history.push(url)
 
   return (
     <ListItem
       button
-      onClick={handle}
+      onClick={onClick || handle}
     >
       <ListItemAvatar>
         <Avatar

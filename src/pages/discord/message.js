@@ -18,33 +18,27 @@ import Frame from '../frame'
 import { fetchMessage, fetchMessages } from '../../structures/message'
 
 const Message = (props) => {
-  let first = true
   const history = useHistory()
   const { dispatch, focused, user, passwd, ws } = props
-  if (!user || !focused) {
+  if (!user) {
     history.replace('/')
     return <></>
-  } 
+  }
 
+  const isGuild = focused.channels
   const { cID } = useParams()
   const [error, setError] = React.useState(null)
   const [messages, setMsgs] = React.useState([])
-  let otoScr = document.getElementById('otoScr')
-  const focusedChannel = focused.channels.find(c => c.id === cID)
+  const focusedChannel = isGuild ? focused.channels?.find(c => c.id === cID) : focused
   
+  let first = true
   let allowOto = true
-  document.onscroll = () => {
-    allowOto = (document.scrollingElement.scrollTop >= document.scrollingElement.scrollTopMax)
-  }
+  let otoScr
 
   const otoScrm = (e, y) => {
-    try {
-      if (e || allowOto) {
-        if (!otoScr) otoScr = document.getElementById('otoScr')
-        document.scrollingElement.scrollTo(0, y >= 0 ? y : otoScr?.scrollHeight)
-      }
-    } catch {
-      console.log('일부 웹 기술이 지원되지 않아서 자동으로 스크롤 할 수 없었습니다.')
+    if (e || allowOto) {
+      if (!otoScr) otoScr = document.getElementById('otoScr')
+      document.scrollingElement.scrollTo(0, y >= 0 ? y : otoScr?.scrollHeight)
     }
   }
 
@@ -68,17 +62,25 @@ const Message = (props) => {
       otoScrm()
     }
   }
-  
-  if (!messages.length && !error && first) {
+
+  React.useEffect(() => {
+    document.onscroll = () => {
+      allowOto = (document.scrollingElement.scrollTop >= document.scrollingElement.scrollTopMax)
+    }
+
     fetchMessages(passwd, focusedChannel.id, messages).then(r => {
       setMsgs(r)
     }).catch(r => {
       setError(r)
       first = false
     })
-  } else if (!error && first) {
+
+    return () => ws.handlers.splice(0, 1)
+  }, [])
+
+  if (first) {
     setTimeout(() => otoScrm(true), 50)
-    first = false
+    first = true
   }
 
   const content = (
@@ -102,6 +104,7 @@ const Message = (props) => {
         <Messages
           messages={messages}
           focused={focused}
+          isGuild={isGuild}
         />
       </List>
     </React.Fragment>

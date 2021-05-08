@@ -11,7 +11,7 @@ import { sortMessages } from "../../../structures/message"
 import MessageComp from './msgComponent'
 
 const Messages = (props) => {
-  const { messages, focused } = props
+  const { messages, focused, isGuild } = props
   return (
     sortMessages(messages).map(m => (
       <ListItem style={{ alignItems: 'flex-start' }}>

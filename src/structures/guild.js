@@ -4,7 +4,7 @@ const getGuildRoles = (member, guild) => {
 }
 
 const getGuildMember = (guild, id) => {
-  const result = guild.members.find(m => m.user.id === id)
+  const result = guild.members?.find(m => m.user.id === id)
   return result
 }
 
