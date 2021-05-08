@@ -7,6 +7,7 @@ import { actionCreators as gU } from '../../redux/reducer/getUser'
 
 import Frame from '../frame'
 import UserCard from './components/userCard'
+import Tester from './test'
 
 const Settings = (props) => {
   const history = useHistory()
@@ -26,10 +27,13 @@ const Settings = (props) => {
   }
 
   const content = (
-    <UserCard
-      user={user}
-      handleLogout={handleLogout}
-    />
+    <>
+      <UserCard
+        user={user}
+        handleLogout={handleLogout}
+      />
+      <Tester view={false}/>
+    </>
   )
 
   return (

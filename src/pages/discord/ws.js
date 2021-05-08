@@ -70,7 +70,7 @@ const makeConnection = (token) => {
 
     ws.onmessage = (raw) => {
       const msg = JSON.parse(raw.data)
-      // console.log(msg)
+      console.log(msg)
 
       ws.seq = msg.s || ws.seq
       if (msg.op === opcodes.gateway.hello) {
