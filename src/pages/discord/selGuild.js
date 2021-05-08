@@ -3,27 +3,18 @@ import { useHistory } from 'react-router-dom'
 
 import {
   List,
-  ListItem,
-  ListItemAvatar,
-  ListItemText,
   Accordion,
   AccordionSummary,
   AccordionDetails,
   Typography,
-  Avatar,
   IconButton
 } from '@material-ui/core'
 import SettingsIcon from '@material-ui/icons/Settings'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import Frame from '../frame'
 
-import { makeStyles } from '@material-ui/core/styles'
 import React from 'react'
-const useStyles = makeStyles((theme) => (
-  {
-    btn: theme.spacing(2)
-  }
-))
+import ChannelItem from './components/channelItem'
 
 const makeWithFolder = (user) => {
   const folders = user.user_settings.guild_folders
@@ -37,7 +28,6 @@ const makeWithFolder = (user) => {
 }
 
 const SelGuild = (props) => {
-  const classes = useStyles()
   const history = useHistory()
   const { dispatch, user } = props
   const [expands, setExpands] = React.useState(
@@ -51,10 +41,6 @@ const SelGuild = (props) => {
   }
 
   const folders = makeWithFolder(user)
-  const handleGuild = (g) => {
-    history.push(`/guild/${g.id}`)
-  }
-
   const expandFolder = (id, expanded) => {
     let result = []
     if (expanded && !expands.includes(id)) result = [...expands, id]
@@ -76,7 +62,6 @@ const SelGuild = (props) => {
       onClick={() => history.push('/settings')}
       edge='start'
       color='inherit'
-      className={classes.btn}
     >
       <SettingsIcon/>
     </IconButton>
@@ -95,19 +80,11 @@ const SelGuild = (props) => {
         <AccordionDetails>
           <List>
             {f.guilds.map((g, i) => 
-              <ListItem
-                button
-                key={`listGuild${i}`}
-                onClick={() => handleGuild(g)}
-              >
-                <ListItemAvatar>
-                  <Avatar
-                    alt={g.name}
-                    src={`https://cdn.discordapp.com/icons/${g.id}/${g.icon}.webp?size=128`}
-                  />
-                </ListItemAvatar>
-                <ListItemText primary={g.name}/>
-              </ListItem>
+              <ChannelItem
+                avatar={`https://cdn.discordapp.com/icons/${g.id}/${g.icon}.webp?size=128`}
+                name={g.name}
+                url={`/guild/${g.id}`}
+              />
             )}
           </List>
         </AccordionDetails>
@@ -118,7 +95,7 @@ const SelGuild = (props) => {
   return (
     <Frame
       button={button}
-      title='선택된 서버 없음'
+      title='선택된 서버가 없음'
       content={content}
     />
   )

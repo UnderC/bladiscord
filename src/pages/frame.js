@@ -1,5 +1,4 @@
 import React from 'react'
-import { useHistory } from 'react-router-dom'
 
 import {
   AppBar,
@@ -29,7 +28,6 @@ const useStyles = makeStyles((theme) => ({
 }))
 
 const Frame = (props) => {
-  const history = useHistory()
   const classes = useStyles()
   const [opened, setOpen] = React.useState(false)
 

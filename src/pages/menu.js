@@ -6,7 +6,6 @@ import {
   ListItem,
   ListItemIcon,
   ListItemText,
-  Divider,
   SwipeableDrawer
 } from '@material-ui/core'
 import FlagIcon from '@material-ui/icons/Flag'
@@ -33,7 +32,7 @@ const Menu = (props) => {
           </ListItemText>
         </ListItem>
 
-        <ListItem onClick={go('/settings')} button>
+        <ListItem onClick={go('/dms')} button>
           <ListItemIcon><ChatIcon/></ListItemIcon>
           <ListItemText>
             개인 메시지
@@ -51,4 +50,4 @@ const Menu = (props) => {
   )
 }
 
-export default Menu
+export default React.memo(Menu)

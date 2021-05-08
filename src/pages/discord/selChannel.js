@@ -6,42 +6,35 @@ import { actionCreators as fG } from '../../redux/reducer/focusGuild'
 
 import {
   List,
-  ListItem,
-  ListItemAvatar,
-  ListItemText,
   Accordion,
   AccordionSummary,
   AccordionDetails,
   Typography
 } from '@material-ui/core'
-import FormatQuoteIcon from '@material-ui/icons/FormatQuote'
-import VolumeUpIcon from '@material-ui/icons/VolumeUp'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import { getGuildMember, getGuildRoles } from '../../structures/guild'
 import Frame from '../frame'
 import { channelPermFilter, makeWithCategory } from '../../structures/channel'
+import ChannelItem from './components/channelItem'
 
 const SelChannel = (props) => {
+  console.log(props)
   const history = useHistory()
   const { dispatch, user } = props
   if (!user) {
     history.replace('/')
     return <></>
   }
-  
+
   const { gID } = useParams()
-  const guild = user.guilds.find(g => g.id === gID)
-  const focused = guild || user.private_channels
+  const focused = user.guilds.find(g => g.id === gID)
   const roles = getGuildRoles(getGuildMember(focused, user.user.id), focused)
   const [expands, setExpands] = React.useState(
     JSON.parse(window.localStorage.getItem('channelExpands')) ||
     []
   )
 
-  const handleChannel = (c) => {
-    dispatch(fG(focused))
-    history.push(`/channel/${c.id}`)
-  }
+  if (props?.focused?.id !== focused.id) dispatch(fG(focused))
 
   const expandCategory = (id, expanded) => {
     let result = []
@@ -73,16 +66,10 @@ const SelChannel = (props) => {
         <AccordionDetails>
           <List>
             {channelPermFilter(roles, c.children, c).map((c, i) => (
-              <ListItem
-                button
-                key={`listChan${i}`}
-                onClick={() => handleChannel(c)}
-              >
-                <ListItemAvatar>
-                  { c.type === 0 ? <FormatQuoteIcon/> : <VolumeUpIcon/> }
-                </ListItemAvatar>
-                <ListItemText primary={c.name}/>
-              </ListItem>
+              <ChannelItem
+                name={c.name}
+                url={`/channel/${c.id}`}
+              />
             ))}
           </List>
         </AccordionDetails>
@@ -100,7 +87,8 @@ const SelChannel = (props) => {
 
 const stateToProps = (state) => {
   return {
-    ...state.getUser
+    ...state.getUser,
+    ...state.focusGuild
   }
 }
 

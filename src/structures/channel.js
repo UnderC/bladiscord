@@ -20,6 +20,7 @@ const channelPermFilter = (roles, channels, category) => {
   const permissions = mergePerm(roles)
   const roleIDs = roles.map(r => r.id)
   const filter = (c) => {
+    if (c.type === 2) return false
     const f = permissions.find(p => (p & 8) === 8)
     if (!isNaN(f)) return true
     
